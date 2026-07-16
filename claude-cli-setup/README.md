@@ -40,9 +40,10 @@ chmod +x install.sh
 2. 첫 실행 시 `settings.json`의 `enabledPlugins`/`extraKnownMarketplaces`를 보고 Claude Code가 마켓플레이스와 플러그인을 자동으로 받아옵니다
 3. 프로젝트별 메모리(`~/.claude/projects/<project>/memory/`)는 이 스크립트 대상이 아닙니다 — 프로젝트 규칙은 각 저장소의 `CLAUDE.md`에 커밋해두는 걸 권장합니다(이 저장소의 루트 `CLAUDE.md` 참고)
 
-## 대화 이력 / 세션 캐시 / 사용 통계까지 동기화하려면
+## 여러 PC/OS에서 같은 작업을 이어가려면
 
-이 두 스크립트는 "환경 설정"만 재현하는 일회성 스크립트입니다. 대화 이력, 세션 캐시, 로그인 토큰까지 두 PC가 계속 같은 상태를 유지하도록 지속적으로 동기화하려면 별도 문서 [SYNC.md](SYNC.md)를 참고하세요 — Syncthing 기반이며, 동시 실행 금지 규칙과 정확한 include/exclude 목록(`.stignore`)을 포함합니다.
+- **여러 OS를 섞어 쓴다면(Windows ↔ Mac/Linux 등)**: [REMOTE-WORK.md](REMOTE-WORK.md) — Claude Code on the web으로 클라우드에서 실행하고 어느 기기든 브라우저로 접속. 로컬 상태 동기화가 아예 필요 없어 가장 안전합니다.
+- **같은 OS끼리, 대화 이력/세션 원본 자체를 그대로 보존하고 싶다면**: [SYNC.md](SYNC.md) — Syncthing 기반 지속 동기화. 동시 실행 금지 규칙과 정확한 include/exclude 목록(`.stignore`)을 포함합니다.
 
 ## 이 스크립트가 재현하지 못하는 것 (SYNC.md 미설정 시)
 

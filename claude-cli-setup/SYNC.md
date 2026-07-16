@@ -1,5 +1,7 @@
 # 두 PC 간 Claude Code 런타임 상태 지속 동기화
 
+> **여러 OS(Windows/Mac/Linux)를 섞어서 쓴다면 이 문서보다 [REMOTE-WORK.md](REMOTE-WORK.md)(Claude Code on the web)를 먼저 고려하세요.** 이 문서(Syncthing 방식)는 셸 스냅샷 등 OS별 가정이 있어 크로스 OS 조합에는 비권장이며, **같은 OS끼리**만 쓰는 걸 전제로 합니다.
+
 `install.ps1`/`install.sh`가 처리하는 "환경 설정 재현"(모델/플러그인 목록/테마 등)에 더해, **대화 이력·세션 캐시·사용 통계 같은 런타임 상태**까지 두 PC가 계속 같은 상태를 유지하도록 파일 동기화 도구([Syncthing](https://syncthing.net), 무료/오픈소스)로 설정하는 방법입니다.
 
 ## 전제 조건 (반드시 지킬 것)
