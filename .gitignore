@@ -1,0 +1,10 @@
+# Playwright test artifacts
+.playwright-mcp/
+
+# Backend (Go)
+backend/*.db
+backend/.venv/
+
+# OS
+Thumbs.db
+.DS_Store
