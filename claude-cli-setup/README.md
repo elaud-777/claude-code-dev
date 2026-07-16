@@ -43,6 +43,7 @@ chmod +x install.sh
 ## 여러 PC/OS에서 같은 작업을 이어가려면
 
 - **여러 OS를 섞어 쓴다면(Windows ↔ Mac/Linux 등)**: [REMOTE-WORK.md](REMOTE-WORK.md) — Claude Code on the web으로 클라우드에서 실행하고 어느 기기든 브라우저로 접속. 로컬 상태 동기화가 아예 필요 없어 가장 안전합니다.
+- **로컬 PC에서 계속 돌리던 세션을 폰/다른 기기에서 잠깐 들여다보거나 지시만 하고 싶다면**: [REMOTE-CONTROL.md](REMOTE-CONTROL.md) — Remote Control 상세 가이드(활성화 절차, 보안 모델, 권한 처리, 한계점)
 - **같은 OS끼리, 대화 이력/세션 원본 자체를 그대로 보존하고 싶다면**: [SYNC.md](SYNC.md) — Syncthing 기반 지속 동기화. 동시 실행 금지 규칙과 정확한 include/exclude 목록(`.stignore`)을 포함합니다.
 
 ## 이 스크립트가 재현하지 못하는 것 (SYNC.md 미설정 시)

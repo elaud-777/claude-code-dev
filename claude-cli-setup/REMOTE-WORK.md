@@ -12,7 +12,7 @@
 | 요구사항 | Pro/Max/Team/Enterprise 구독 | Pro/Max/Team 구독 (Enterprise는 프리미엄 seat) | 없음(무료) |
 | 로컬 파일 접근 | 가능 | 불가 (GitHub 저장소 기준만) | 가능 |
 
-**Remote Control**은 "이미 로컬에서 실행 중인 내 세션을 다른 기기에서 원격 조종"하는 기능이라 호스트 PC가 항상 켜져 있어야 합니다 — "하나의 원격 환경"이 아니라 "내 PC 원격 조종"에 가깝습니다. 반대로 **Claude Code on the web**은 실행 환경 자체가 클라우드에 있으므로 이 프로젝트처럼 여러 PC를 오가며 작업하기에 적합합니다.
+**Remote Control**은 "이미 로컬에서 실행 중인 내 세션을 다른 기기에서 원격 조종"하는 기능이라 호스트 PC가 항상 켜져 있어야 합니다 — "하나의 원격 환경"이 아니라 "내 PC 원격 조종"에 가깝습니다. 반대로 **Claude Code on the web**은 실행 환경 자체가 클라우드에 있으므로 이 프로젝트처럼 여러 PC를 오가며 작업하기에 적합합니다. Remote Control의 활성화 절차/보안 모델/한계점을 상세히 알고 싶다면 [REMOTE-CONTROL.md](REMOTE-CONTROL.md)를 참고하세요.
 
 ## 설정 절차
 
