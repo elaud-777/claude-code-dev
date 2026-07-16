@@ -17,7 +17,10 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/elaud-777/taskflow-frontend:latest
+          # Local image (built with `docker build -t taskflow-frontend:local ./frontend`
+          # then loaded into the cluster, e.g. `kind load docker-image taskflow-frontend:local`).
+          image: taskflow-frontend:local
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           volumeMounts:

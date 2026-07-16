@@ -1,21 +1,30 @@
 package main
 
-import "net/http"
+import (
+	"embed"
+	"net/http"
+)
 
-// swaggerUIHandler serves a minimal Swagger UI page (via CDN assets) pointed
-// at /openapi.json, giving the same "/docs" JWT-testable experience as the
-// Python FastAPI version without vendoring swagger-ui's static assets.
+//go:embed swaggerui/swagger-ui.css swaggerui/swagger-ui-bundle.js
+var swaggerUIAssets embed.FS
+
+// swaggerUIFileHandler serves the vendored swagger-ui-dist assets embedded
+// in the binary at build time, so /docs works fully offline (no unpkg CDN).
+var swaggerUIFileHandler = http.FileServer(http.FS(swaggerUIAssets))
+
+// swaggerUIHandler serves a minimal Swagger UI page pointed at /openapi.json,
+// using the locally embedded swagger-ui assets instead of a CDN.
 func swaggerUIHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(`<!DOCTYPE html>
 <html>
 <head>
   <title>TaskFlow API Docs</title>
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <link rel="stylesheet" href="/docs/swaggerui/swagger-ui.css" />
 </head>
 <body>
   <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="/docs/swaggerui/swagger-ui-bundle.js"></script>
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({

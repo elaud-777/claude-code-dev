@@ -1,0 +1,70 @@
+# Optional in-cluster Postgres, for a fully self-contained deployment with
+# no external DB service. If you'd rather use a managed Postgres (Neon or
+# otherwise), skip this file and point backend-secret's DATABASE_URL there.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-postgres
+  namespace: taskflow
+  labels:
+    app: taskflow-postgres
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: taskflow-postgres
+  template:
+    metadata:
+      labels:
+        app: taskflow-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: taskflow
+            - name: POSTGRES_PASSWORD
+              value: taskflow
+            - name: POSTGRES_DB
+              value: taskflow
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "taskflow", "-d", "taskflow"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: taskflow-postgres-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: taskflow-postgres-data
+  namespace: taskflow
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskflow-postgres
+  namespace: taskflow
+spec:
+  selector:
+    app: taskflow-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP

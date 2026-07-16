@@ -5,10 +5,15 @@ services:
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     environment:
-      DATABASE_URL: ${DATABASE_URL:-sqlite:///./data/taskflow.db}
+      # Default: the `postgres` service below (a container on this machine),
+      # not an external/cloud DB. No internet access is required to run this.
+      DATABASE_URL: ${DATABASE_URL:-postgres://taskflow:taskflow@postgres:5432/taskflow?sslmode=disable}
       JWT_SECRET: ${JWT_SECRET:-dev-secret-change-in-production}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:8000}
       PORT: "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - backend-data:/app/data
     restart: unless-stopped
@@ -22,12 +27,11 @@ services:
       - backend
     restart: unless-stopped
 
-  # Optional local Postgres, for testing against a Postgres-compatible DB
-  # before pointing DATABASE_URL at a real Neon instance.
-  # Enable with: docker compose --profile postgres up
+  # Local Postgres container — the default DB for this stack. Nothing here
+  # talks to Neon or any other external service; swap DATABASE_URL yourself
+  # if you want to point at a cloud DB instead.
   postgres:
     image: postgres:16-alpine
-    profiles: ["postgres"]
     environment:
       POSTGRES_USER: taskflow
       POSTGRES_PASSWORD: taskflow
@@ -36,6 +40,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow -d taskflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     restart: unless-stopped
 
 volumes:

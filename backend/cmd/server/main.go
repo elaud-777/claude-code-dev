@@ -37,6 +37,7 @@ func main() {
 	router.Get("/openapi.json", func(w http.ResponseWriter, req *http.Request) {
 		http.ServeFile(w, req, "docs/swagger.json")
 	})
+	router.Handle("/docs/swaggerui/*", http.StripPrefix("/docs/", swaggerUIFileHandler))
 	router.Get("/docs", swaggerUIHandler)
 	router.Get("/docs/*", swaggerUIHandler)
 	router.Mount("/", server.NewRouter(a))

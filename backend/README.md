@@ -20,6 +20,8 @@ go test ./...
 
 서버 실행 후 브라우저에서 `http://localhost:8000/docs` 접속. JWT 발급 후 "Authorize" 버튼으로 토큰을 입력하면 인증이 필요한 API도 바로 호출 테스트 가능합니다.
 
+Swagger UI 정적 자산(`swagger-ui.css`, `swagger-ui-bundle.js`)은 `cmd/server/swaggerui/`에 벤더링되어 `go:embed`로 바이너리에 내장됩니다 — unpkg 등 외부 CDN 없이 완전히 오프라인에서 동작합니다.
+
 OpenAPI 스펙을 어노테이션으로부터 재생성하려면:
 
 ```bash
@@ -31,7 +33,7 @@ swag init -g cmd/server/main.go -o docs --parseDependency --parseInternal
 
 | 변수 | 설명 | 기본값 |
 |---|---|---|
-| `DATABASE_URL` | `sqlite:///./taskflow.db` 또는 `postgres://...` (Neon 등) | `sqlite:///./taskflow.db` |
+| `DATABASE_URL` | `sqlite:///./taskflow.db` 또는 `postgres://...` (docker-compose의 로컬 `postgres` 컨테이너, 또는 원한다면 Neon 등 외부 Postgres) | `sqlite:///./taskflow.db` |
 | `JWT_SECRET` | JWT 서명 시크릿 | `dev-secret-change-in-production` (운영에서는 반드시 변경) |
 | `CORS_ORIGINS` | 콤마로 구분된 허용 도메인 목록 | `http://localhost:8000,http://localhost:5500` |
 | `PORT` | 서버 포트 | `8000` |
@@ -41,6 +43,7 @@ swag init -g cmd/server/main.go -o docs --parseDependency --parseInternal
 ```
 backend/
   cmd/server/       # 엔트리포인트, Swagger UI 라우트
+    swaggerui/      # 벤더링된 swagger-ui-dist 정적 자산 (go:embed, CDN 미사용)
   internal/
     app/            # 공통 App(DB, Settings) 구조체
     config/         # 환경변수 로딩

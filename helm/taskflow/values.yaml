@@ -5,8 +5,13 @@ namespace:
 backend:
   replicaCount: 2
   image:
-    repository: ghcr.io/elaud-777/taskflow-backend
-    tag: latest
+    # Default assumes a locally-built image loaded straight into the
+    # cluster (`docker build -t taskflow-backend:local ./backend` +
+    # `kind load docker-image` / `minikube image load`) — no registry
+    # required. For a remote cluster, override with your own registry,
+    # e.g. --set backend.image.repository=ghcr.io/<you>/taskflow-backend
+    repository: taskflow-backend
+    tag: local
     pullPolicy: IfNotPresent
   service:
     port: 8000
@@ -22,22 +27,43 @@ backend:
   corsOrigins: "https://taskflow.example.com"
 
   # DATABASE_URL / JWT_SECRET are sensitive -> Secret.
-  # NOTE: with replicaCount > 1, databaseUrl MUST point at Postgres (e.g. Neon).
+  # NOTE: with replicaCount > 1, databaseUrl MUST point at Postgres.
   # SQLite is single-writer and only safe for a single, non-replicated pod.
+  # Default below assumes k8s/postgres.yaml's in-cluster Postgres (a
+  # container running in this cluster, not an external/cloud DB); swap it
+  # for a managed Postgres (Neon, etc.) connection string only if you want one.
   secret:
     # If existingSecret is set, the chart uses that Secret (must contain
     # DATABASE_URL and JWT_SECRET keys) instead of creating one from the
     # values below. Prefer this in real deployments so secrets never sit in
     # `helm history`/values files.
     existingSecret: ""
-    databaseUrl: "postgres://user:password@host:5432/taskflow?sslmode=require"
+    # Leave blank to auto-derive from the postgres.* values below (pointing
+    # at the in-cluster Postgres this chart deploys). Set explicitly to
+    # override, e.g. to point at a managed Postgres (Neon, etc.) instead.
+    databaseUrl: ""
     jwtSecret: "replace-with-a-long-random-value"
+
+# In-cluster Postgres — a container running in this cluster, not an
+# external/cloud DB. Set enabled: false if you're pointing
+# backend.secret.databaseUrl (or existingSecret) at a managed Postgres instead.
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  storage: 1Gi
+  auth:
+    user: taskflow
+    password: taskflow
+    database: taskflow
 
 frontend:
   replicaCount: 2
   image:
-    repository: ghcr.io/elaud-777/taskflow-frontend
-    tag: latest
+    # Same local-image assumption as backend.image above.
+    repository: taskflow-frontend
+    tag: local
     pullPolicy: IfNotPresent
   service:
     port: 80

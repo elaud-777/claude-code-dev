@@ -1,4 +1,4 @@
-.PHONY: build test run fmt lint docker-build docker-up docker-down docker-logs docker-restart clean
+.PHONY: build test run fmt lint frontend-css docker-build docker-up docker-down docker-logs docker-restart clean
 
 BACKEND_DIR := backend
 BIN := $(BACKEND_DIR)/bin/server
@@ -20,7 +20,10 @@ fmt:
 lint:
 	cd $(BACKEND_DIR) && go vet ./...
 
-## Docker Compose (backend + frontend, SQLite by default)
+frontend-css:
+	cd frontend && ./scripts/build-css.sh
+
+## Docker Compose (backend + frontend + local Postgres, all containers on this machine)
 
 docker-build:
 	docker compose build
@@ -35,11 +38,6 @@ docker-logs:
 	docker compose logs -f
 
 docker-restart: docker-down docker-up
-
-## Docker Compose with local Postgres profile enabled
-
-docker-up-postgres:
-	docker compose --profile postgres up -d --build
 
 clean:
 	rm -f $(BIN)
