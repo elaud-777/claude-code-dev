@@ -4,6 +4,10 @@
 # Backend (Go)
 backend/*.db
 backend/.venv/
+backend/bin/
+
+# Local env overrides
+.env
 
 # OS
 Thumbs.db

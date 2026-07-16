@@ -1,6 +1,8 @@
 package db
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -109,6 +111,11 @@ func Connect(databaseURL string) (*sqlx.DB, error) {
 	path = strings.TrimPrefix(path, "sqlite://")
 	if path == "" {
 		path = "./taskflow.db"
+	}
+	if dir := filepath.Dir(path); dir != "." {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			return nil, err
+		}
 	}
 	conn, err := sqlx.Connect("sqlite", path)
 	if err != nil {
