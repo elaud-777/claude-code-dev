@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taskflow-frontend-config
+  namespace: taskflow
+data:
+  config.js: |
+    window.API_BASE = "https://api.taskflow.example.com";

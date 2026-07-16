@@ -1,0 +1,63 @@
+namespace:
+  create: true
+  name: taskflow
+
+backend:
+  replicaCount: 2
+  image:
+    repository: ghcr.io/elaud-777/taskflow-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    port: 8000
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi
+
+  # CORS_ORIGINS is non-sensitive config -> ConfigMap.
+  corsOrigins: "https://taskflow.example.com"
+
+  # DATABASE_URL / JWT_SECRET are sensitive -> Secret.
+  # NOTE: with replicaCount > 1, databaseUrl MUST point at Postgres (e.g. Neon).
+  # SQLite is single-writer and only safe for a single, non-replicated pod.
+  secret:
+    # If existingSecret is set, the chart uses that Secret (must contain
+    # DATABASE_URL and JWT_SECRET keys) instead of creating one from the
+    # values below. Prefer this in real deployments so secrets never sit in
+    # `helm history`/values files.
+    existingSecret: ""
+    databaseUrl: "postgres://user:password@host:5432/taskflow?sslmode=require"
+    jwtSecret: "replace-with-a-long-random-value"
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: ghcr.io/elaud-777/taskflow-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    port: 80
+  resources:
+    requests:
+      cpu: 25m
+      memory: 16Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+  # Injected as window.API_BASE via a ConfigMap-mounted config.js.
+  apiBase: "https://api.taskflow.example.com"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  frontendHost: taskflow.example.com
+  apiHost: api.taskflow.example.com
+  tls:
+    enabled: false
+    secretName: taskflow-tls

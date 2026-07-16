@@ -1,0 +1,31 @@
+TaskFlow deployed as release "{{ .Release.Name }}" in namespace "{{ include "taskflow.namespace" . }}".
+
+{{- if .Values.ingress.enabled }}
+
+Frontend: http{{ if .Values.ingress.tls.enabled }}s{{ end }}://{{ .Values.ingress.frontendHost }}
+Backend:  http{{ if .Values.ingress.tls.enabled }}s{{ end }}://{{ .Values.ingress.apiHost }} (Swagger at /docs)
+{{- else }}
+
+Ingress is disabled. Reach the services via port-forward, e.g.:
+  kubectl -n {{ include "taskflow.namespace" . }} port-forward svc/{{ .Release.Name }}-frontend 3000:{{ .Values.frontend.service.port }}
+  kubectl -n {{ include "taskflow.namespace" . }} port-forward svc/{{ .Release.Name }}-backend 8000:{{ .Values.backend.service.port }}
+{{- end }}
+
+{{- if not .Values.backend.secret.existingSecret }}
+
+WARNING: backend.secret.existingSecret is not set, so DATABASE_URL/JWT_SECRET
+came from values.yaml (or --set on the CLI) and will be visible in
+`helm get values`/`helm history`. For anything beyond local testing, create
+a Secret out-of-band and set backend.secret.existingSecret to its name:
+
+  kubectl create secret generic taskflow-backend-secret -n {{ include "taskflow.namespace" . }} \
+    --from-literal=DATABASE_URL='postgres://user:pass@host/db?sslmode=require' \
+    --from-literal=JWT_SECRET="$(openssl rand -hex 32)"
+{{- end }}
+
+{{- if gt (.Values.backend.replicaCount | int) 1 }}
+
+NOTE: backend.replicaCount is {{ .Values.backend.replicaCount }}. Make sure
+backend.secret.databaseUrl (or your existingSecret) points at Postgres, not
+SQLite — SQLite is single-writer and unsafe to share across replicas.
+{{- end }}

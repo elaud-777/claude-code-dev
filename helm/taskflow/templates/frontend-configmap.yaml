@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-frontend-config
+  namespace: {{ include "taskflow.namespace" . }}
+  labels:
+    {{- include "taskflow.labels" . | nindent 4 }}
+    app: {{ .Release.Name }}-frontend
+data:
+  config.js: |
+    window.API_BASE = {{ .Values.frontend.apiBase | quote }};

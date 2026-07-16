@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backend-config
+  namespace: {{ include "taskflow.namespace" . }}
+  labels:
+    {{- include "taskflow.labels" . | nindent 4 }}
+    app: {{ .Release.Name }}-backend
+data:
+  CORS_ORIGINS: {{ .Values.backend.corsOrigins | quote }}
+  PORT: "8000"
