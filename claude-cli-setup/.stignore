@@ -1,0 +1,30 @@
+# Syncthing ignore patterns for a home-directory-rooted folder share.
+# Goal: sync only Claude Code's runtime state (history/sessions/settings/
+# credentials), skip everything else in the home directory, and skip the
+# parts of .claude/ that are machine-bound or purely regenerable.
+#
+# Paste this into the Syncthing folder's "Ignore Patterns" editor (or drop
+# this file as `.stignore` at the root of the shared folder), then use
+# Syncthing's "Preview" to confirm the actual file list before trusting it -
+# ignore-pattern precedence can vary slightly by Syncthing version.
+
+# 1) Ignore everything in the home directory by default...
+*
+
+# 2) ...except Claude Code's state.
+!/.claude
+!/.claude/**
+!/.claude.json
+!/.claude.json.backup
+
+# 3) Within .claude/, re-exclude machine-bound / regenerable subpaths.
+#    (Plugins are intentionally excluded - see SYNC.md: they carry
+#    machine-specific absolute paths and are re-installed automatically
+#    from settings.json instead of being file-synced.)
+/.claude/plugins/**
+/.claude/daemon/**
+/.claude/shell-snapshots/**
+/.claude/cache/**
+/.claude/daemon.log
+/.claude/.last-cleanup
+/.claude/.last-update-result.json
